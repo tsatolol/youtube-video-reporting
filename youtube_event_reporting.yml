@@ -1,0 +1,217 @@
+app:
+  description: 'YouTube のイベント動画について、レポートを自動生成します。
+
+    [input] YouTube の動画 URL に含まれる 動画 ID
+
+    [output] イベントレポート '
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: workflow
+  name: YouTube のイベントレポート自動生成
+  use_icon_as_answer_icon: false
+kind: app
+version: 0.1.2
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        image_file_size_limit: 10
+        video_file_size_limit: 100
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        sourceType: start
+        targetType: tool
+      id: 1735214925333-source-1735214969592-target
+      source: '1735214925333'
+      sourceHandle: source
+      target: '1735214969592'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: tool
+        targetType: llm
+      id: 1735214969592-source-1735215256325-target
+      source: '1735214969592'
+      sourceHandle: source
+      target: '1735215256325'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: end
+      id: 1735215256325-source-1735215348267-target
+      source: '1735215256325'
+      sourceHandle: source
+      target: '1735215348267'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: 開始
+        type: start
+        variables:
+        - label: video_id
+          max_length: 48
+          options: []
+          required: true
+          type: text-input
+          variable: video_id
+      height: 69
+      id: '1735214925333'
+      position:
+        x: 30
+        y: 237.5
+      positionAbsolute:
+        x: 30
+        y: 237.5
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        provider_id: searchapi
+        provider_name: searchapi
+        provider_type: builtin
+        selected: false
+        title: YouTube Transcripts API
+        tool_configurations: {}
+        tool_label: YouTube Transcripts API
+        tool_name: youtube_transcripts_api
+        tool_parameters:
+          language:
+            type: mixed
+            value: en
+          video_id:
+            type: mixed
+            value: '{{#1735214925333.video_id#}}'
+        type: tool
+      height: 42
+      id: '1735214969592'
+      position:
+        x: 334
+        y: 237.5
+      positionAbsolute:
+        x: 334
+        y: 237.5
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1735214969592'
+          - text
+        desc: ''
+        model:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: gpt-4o
+          provider: openai
+        prompt_template:
+        - id: 752f4ed9-a4ce-469f-85d1-187f2a9a2dfa
+          role: system
+          text: "# 役割\nあなたは動画を解析する言語モデルです。\n\n# 目的\nインターネット広告事業を営む企業では、事業に関連するイベントに社員を派遣し、イベント内容についてレポートを作成しています。\n\
+            レポートは何らかの形で事業に活用されます。\n\n## 指示\n- 与えられた動画データを最初から最後まで利用して、理解してください。\n\
+            - 与えられた動画データをもとに、レポートを作成してください。\n\n## 条件\n- レポートには次の項目を加えてください。\n\t- イベント名\n\
+            \t- 場所\n\t- 講演内容\n\t- 登壇者\n\t- 内容\n- 動画の内容は次のように記述してください。\n```\n1. オープニング\n\
+            内容：○○\n\n2. Sally の登壇\n内容：○○\n```\n- 動画内で言及されたことのみを、レポートにまとめてください。\n\n\
+            # 動画の字幕データ\n{{#context#}}"
+        selected: false
+        title: LLM
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 75
+      id: '1735215256325'
+      position:
+        x: 638
+        y: 237.5
+      positionAbsolute:
+        x: 638
+        y: 237.5
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - '1735215256325'
+          - text
+          variable: text
+        selected: false
+        title: 終了
+        type: end
+      height: 69
+      id: '1735215348267'
+      position:
+        x: 942
+        y: 237.5
+      positionAbsolute:
+        x: 942
+        y: 237.5
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    viewport:
+      x: 73.48760120866467
+      y: 7.713393256634653
+      zoom: 0.6018295403701044
